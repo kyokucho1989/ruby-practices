@@ -4,7 +4,7 @@
 kill_counts = ARGV.first.split(',')
 
 kill_counts.each_with_index do |n, i|
-  n == 'X' ? kill_counts[i] = n : kill_counts[i] = n.to_i
+  kill_counts[i] = n == 'X' ? n : n.to_i
 end
 
 kill_counts_x_to_ten = kill_counts.map do |n|
@@ -17,7 +17,6 @@ end
 # spear_flag =>           [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 
 # ストライクの結果表示
-strike_flag = []
 strike_flag = kill_counts.map do |n|
   n == 'X' ? 1 : 0
 end
@@ -35,21 +34,19 @@ strike_bonus = strike_bonus_array2.sum
 # ストライクをとったレーンの2投目に0を付け足す
 formatted_counts = kill_counts.dup
 formatted_counts.each_index do |i|
-  if formatted_counts[i] == 'X'
-    formatted_counts.insert(i+1, 0)
-  end
+  formatted_counts.insert(i + 1, 0) if formatted_counts[i] == 'X'
 end
 formatted_counts.push 0, 0
 
 spare_flag = [0]
 formatted_counts.each_slice(2) do |num|
-  if num.include?('X')
-    spare_flag << [0, 0]
-  elsif num.sum == 10
-    spare_flag << [0, 1]
-  else
-    spare_flag << [0, 0]
-  end
+  spare_flag << if num.include?('X')
+                  [0, 0]
+                elsif num.sum == 10
+                  [0, 1]
+                else
+                  [0, 0]
+                end
 end
 
 spare_flag.flatten!
