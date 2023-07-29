@@ -1,5 +1,6 @@
 #!/usr/bin/env ruby
-[*1..20].each do |n|
+
+(1..20).each do |n|
   if n % 15 == 0
     puts "FizzBuzz"
   elsif n % 3 == 0
