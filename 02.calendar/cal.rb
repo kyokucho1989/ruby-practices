@@ -5,39 +5,28 @@ opt = OptionParser.new
 month = Date.today.month
 year = Date.today.year
 opt.on('-m [val]') {|m| month = m.to_i }
-opt.on('-y [val]') {|y| 
-  if y == nil
-    year = Date.today.year
-  else
-    year = y.to_i
-  end 
-}
+opt.on('-y [val]') {|y| year = y.to_i }
 
 opt.parse!(ARGV)
 
 day_start = Date.new(year,month,1)
 day_end = Date.new(year,month,-1)
-days = [*day_start.day..day_end.day]
-
-days_to_shift = day_start.wday + 1
-disp_days = days
-days_to_shift.times{
-  disp_days = days.unshift("")
-}
+days = (day_start.day..day_end.day)
+days_to_shift = day_start.wday + 3
 
 weekdays = ["日","月","火","水","木","金","土"]
-puts sprintf("      %d月 %d", month,year)
-print sprintf("%s " * weekdays.length, *weekdays)
-disp_days.each_with_index {|day,i|
-  if month == Date.today.month && day == Date.today.day
-    print "\e[31m"
+puts "      #{month}月 #{year}"
+weekdays.each {|day| print day.ljust(2)}
+puts ""
+print "  " * days_to_shift
+(day_start..day_end).each {|date|
+  if month == Date.today.month && date.day == Date.today.day && year == Date.today.year
+    print "\e[30m\e[47m"
   else
     print "\e[0m"
   end
-  print sprintf("%2s ",day)
-  if i % 7 == 0
-    puts ""
-  end
+  print "#{date.day.to_s.rjust(2)}" + "\e[0m "
+  puts "" if date.saturday? 
   print "\e[0m"
 }
 puts ""
