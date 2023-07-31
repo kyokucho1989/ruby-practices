@@ -12,13 +12,13 @@ opt.parse!(ARGV)
 
 day_start = Date.new(year, month, 1)
 day_end = Date.new(year, month, -1)
-days_to_shift = day_start.wday + 3
+days_to_shift = day_start.wday
 
 weekdays = %w[日 月 火 水 木 金 土]
 puts "      #{month}月 #{year}"
 weekdays.each { |day| print day.ljust(2) }
 puts ''
-print '  ' * days_to_shift
+print '   ' * days_to_shift
 (day_start..day_end).each do |date|
   if month == Date.today.month && date.day == Date.today.day && year == Date.today.year
     print "\e[30m\e[47m"
