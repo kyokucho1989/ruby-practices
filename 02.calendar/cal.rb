@@ -20,13 +20,8 @@ weekdays.each { |day| print day.ljust(2) }
 puts ''
 print '   ' * days_to_shift
 (day_start..day_end).each do |date|
-  if month == Date.today.month && date.day == Date.today.day && year == Date.today.year
-    print "\e[30m\e[47m"
-  else
-    print "\e[0m"
-  end
+  Date.today == date ? (print "\e[7m") : (print "\e[0m")
   print "#{date.day.to_s.rjust(2)}\e[0m "
   puts '' if date.saturday?
-  print "\e[0m"
 end
 puts ''
