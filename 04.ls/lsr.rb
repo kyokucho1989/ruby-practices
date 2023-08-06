@@ -9,12 +9,9 @@ files = file_names.map do |name|
   { name: }
 end
 
-fold_point = file_names.size / display_col_size
+fold_point = (file_names.size / display_col_size.to_f).ceil
 
-matrix_type_files = []
-files.each_slice(fold_point) do |separated_files|
-  matrix_type_files << separated_files
-end
+matrix_type_files = files.each_slice(fold_point).to_a
 
 num = fold_point - matrix_type_files.last.size
 num.times do
