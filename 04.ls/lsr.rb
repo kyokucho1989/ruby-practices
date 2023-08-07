@@ -2,7 +2,14 @@
 # frozen_string_literal: true
 
 require 'optparse'
+
+opt = OptionParser.new
 file_names = Dir.glob('*')
+
+opt.on('-a [val]') do |_flag|
+  file_names = Dir.glob('.*') + file_names
+end
+opt.parse!(ARGV)
 
 display_col_size = 3
 files = file_names.map do |name|
