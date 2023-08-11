@@ -7,7 +7,7 @@ opt = OptionParser.new
 file_names = Dir.glob('*')
 
 opt.on('-a [val]') do |_flag|
-  file_names = Dir.glob(['.*','*'])
+  file_names = Dir.glob("{.,*}*")
 end
 opt.parse!(ARGV)
 
