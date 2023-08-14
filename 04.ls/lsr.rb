@@ -4,14 +4,11 @@
 require 'optparse'
 
 opt = OptionParser.new
-
-option_a_flag = false
+arg = ['*']
 opt.on('-a [val]') do |_flag|
-  option_a_flag = true
+  arg << File::FNM_DOTMATCH
 end
 opt.parse!(ARGV)
-
-*arg = option_a_flag ? ["*", File::FNM_DOTMATCH] : ["*"]
 file_names = Dir.glob(*arg)
 
 display_col_size = 3
