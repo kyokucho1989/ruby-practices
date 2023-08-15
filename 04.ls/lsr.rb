@@ -2,7 +2,14 @@
 # frozen_string_literal: true
 
 require 'optparse'
-file_names = Dir.glob('*')
+
+opt = OptionParser.new
+arg = ['*']
+opt.on('-a [val]') do |_flag|
+  arg << File::FNM_DOTMATCH
+end
+opt.parse!(ARGV)
+file_names = Dir.glob(*arg)
 
 display_col_size = 3
 files = file_names.map do |name|
