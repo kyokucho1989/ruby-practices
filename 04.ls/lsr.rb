@@ -11,11 +11,10 @@ reverse_flag = false
 # end
 
 opt.on('-r [val]') do |_flag|
-  reverse_flag == true
+  reverse_flag = true
 end
 opt.parse!(ARGV)
 file_names = Dir.glob(*arg).then { |result| reverse_flag ? result.reverse : result }
-
 display_col_size = 3
 files = file_names.map do |name|
   { name: }
