@@ -5,12 +5,16 @@ require 'optparse'
 
 opt = OptionParser.new
 arg = ['*']
-opt.on('-a [val]') do |_flag|
-  arg << File::FNM_DOTMATCH
+reverse_flag = false
+# opt.on('-a [val]') do |_flag|
+#   arg << File::FNM_DOTMATCH
+# end
+
+opt.on('-r [val]') do |_flag|
+  reverse_flag = true
 end
 opt.parse!(ARGV)
-file_names = Dir.glob(*arg)
-
+file_names = Dir.glob(*arg).then { |result| reverse_flag ? result.reverse : result }
 display_col_size = 3
 files = file_names.map do |name|
   { name: }
