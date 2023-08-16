@@ -41,9 +41,9 @@ end
 def get_timestamp(fstat)
   date = fstat.ctime
   if Date.today.year == date.year
-    date.strftime("%_m %_d %R")
+    date.strftime('%_m %_d %R')
   else
-    date.strftime("%_m %_d  %Y")
+    date.strftime('%_m %_d  %Y')
   end
 end
 
@@ -72,29 +72,28 @@ permission_numbers = File.stat(first_file_name).mode.to_s(8)
 display_col_size = 3
 
 files = file_names.map do |name|
-  
   if !l_flag
     { name: }
   else
     hash = { name: }
     if FileTest.symlink?(name)
       file_stat = File.lstat(name)
-      hash[:readlink] = ' -> ' + File.readlink(name)
+      hash[:readlink] = " -> #{File.readlink(name)}"
     else
       file_stat = File.stat(name)
       hash[:readlink] = ''
     end
-      permission_numbers = file_stat.mode.to_s(8)
-      permission_chars = convert_mode_number_to_symbol(permission_numbers)
-      hash[:permission] = permission_chars
-      hash[:mode] = get_ftype(file_stat)
-      hash[:hardlink] = file_stat.nlink.to_s
-      u_id = file_stat.uid
-      hash[:owner] = Etc.getpwuid(u_id).name
-      g_id = file_stat.gid
-      hash[:group] = Etc.getgrgid(g_id).name
-      hash[:size] = file_stat.size.to_s
-      hash[:timestamp] = get_timestamp(file_stat)
+    permission_numbers = file_stat.mode.to_s(8)
+    permission_chars = convert_mode_number_to_symbol(permission_numbers)
+    hash[:permission] = permission_chars
+    hash[:mode] = get_ftype(file_stat)
+    hash[:hardlink] = file_stat.nlink.to_s
+    u_id = file_stat.uid
+    hash[:owner] = Etc.getpwuid(u_id).name
+    g_id = file_stat.gid
+    hash[:group] = Etc.getgrgid(g_id).name
+    hash[:size] = file_stat.size.to_s
+    hash[:timestamp] = get_timestamp(file_stat)
     hash
   end
 end
@@ -115,10 +114,10 @@ if !l_flag
     puts ''
   end
 else
-  puts 'total ' + comupute_total_blocksize(files).to_s
+  puts "total #{comupute_total_blocksize(files)}"
   files.each do |file|
     print file[:mode] + file[:permission] + file[:hardlink].rjust(5) + file[:owner].rjust(10)
-    print file[:group].rjust(7) + file[:size].rjust(6) + file[:timestamp].rjust(12) + ' ' + file[:name] + file[:readlink]
+    print "#{file[:group].rjust(7)}#{file[:size].rjust(6)}#{file[:timestamp].rjust(12)} #{file[:name].ljust(5)}#{file[:readlink]}"
     puts ''
   end
 
