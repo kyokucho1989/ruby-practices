@@ -5,6 +5,10 @@ require 'optparse'
 require 'etc'
 require 'date'
 
+TOTAL_BLOCKS = 0
+BLOCK_SIZE = 512
+BLOCK_UNITS = 8
+
 def get_ftype(fstat)
   type = fstat.ftype
   if type == 'directory'
@@ -17,23 +21,16 @@ def get_ftype(fstat)
 end
 
 def comupute_total_blocksize(files)
-  total_blocks = 0
-  block_size = 512
-  block_units = 8
-  file_cumputes = files.select { |a| a[:mode] == '-' }
-  file_cumputes.each do |file|
-    total_blocks += (file[:size].to_i / (block_size * block_units).to_f).ceil * block_units
-  end
-  total_blocks
+  selected_files = files.select { |a| a[:mode] == '-' }
+  block_sizes = selected_files.map { |file| (file[:size].to_i / (BLOCK_SIZE * BLOCK_UNITS).to_f).ceil * BLOCK_UNITS }
+  block_sizes.sum
 end
 
 def convert_mode_number_to_symbol(number)
   cut_numbers = number[-3, 3].chars
   permission_chars = ''
   cut_numbers.each do |n|
-    permission_chars += (n.to_i & 0b100).zero? ? '-' : 'r'
-    permission_chars += (n.to_i & 0b010).zero? ? '-' : 'w'
-    permission_chars += (n.to_i & 0b001).zero? ? '-' : 'x'
+    permission_chars += (0..2).map { |i| (n.to_i & 0b100 >> i).zero? ? '-' : 'rwx'[i] }.join
   end
   permission_chars
 end
@@ -44,6 +41,35 @@ def get_timestamp(fstat)
     date.strftime('%_m %_d %R')
   else
     date.strftime('%_m %_d  %Y')
+  end
+end
+
+def get_matrix_type_files(files, file_names, display_col_size)
+  fold_point = (file_names.size / display_col_size.to_f).ceil
+  matrix_type_files = files.each_slice(fold_point).to_a
+  num = fold_point - matrix_type_files.last.size
+  num.times do
+    matrix_type_files.last << { name: '' }
+  end
+  matrix_type_files
+end
+
+def display_as_transposed_matrix(matrix_type_files)
+  disp_file_names = matrix_type_files.transpose
+  disp_file_names.each do |disp_files|
+    disp_files.each do |file|
+      print file[:name].ljust(40)
+    end
+    puts ''
+  end
+end
+
+def display_with_l_option(files, total_blocksize)
+  puts "total #{total_blocksize}"
+  files.each do |file|
+    print file[:mode] + file[:permission] + file[:hardlink].rjust(5) + file[:owner].rjust(10)
+    print "#{file[:group].rjust(7)}#{file[:size].rjust(6)}#{file[:timestamp].rjust(12)} #{file[:name].ljust(5)}#{file[:readlink]}"
+    puts ''
   end
 end
 
@@ -71,10 +97,8 @@ permission_numbers = File.stat(first_file_name).mode.to_s(8)
 
 display_col_size = 3
 
-files = file_names.map do |name|
-  if !l_flag
-    { name: }
-  else
+if l_flag
+  files = file_names.map do |name|
     hash = { name: }
     if FileTest.symlink?(name)
       file_stat = File.lstat(name)
@@ -96,29 +120,14 @@ files = file_names.map do |name|
     hash[:timestamp] = get_timestamp(file_stat)
     hash
   end
-end
 
-if !l_flag
-  fold_point = (file_names.size / display_col_size.to_f).ceil
-  matrix_type_files = files.each_slice(fold_point).to_a
-  num = fold_point - matrix_type_files.last.size
-  num.times do
-    matrix_type_files.last << { name: '' }
-  end
+  total_blocksize = comupute_total_blocksize(files)
+  display_with_l_option(files, total_blocksize)
 
-  disp_file_names = matrix_type_files.transpose
-  disp_file_names.each do |disp_files|
-    disp_files.each do |file|
-      print file[:name].ljust(40)
-    end
-    puts ''
-  end
 else
-  puts "total #{comupute_total_blocksize(files)}"
-  files.each do |file|
-    print file[:mode] + file[:permission] + file[:hardlink].rjust(5) + file[:owner].rjust(10)
-    print "#{file[:group].rjust(7)}#{file[:size].rjust(6)}#{file[:timestamp].rjust(12)} #{file[:name].ljust(5)}#{file[:readlink]}"
-    puts ''
+  files = file_names.map do |name|
+    { name: }
   end
-
+  matrix_type_files = get_matrix_type_files(files, file_names, display_col_size)
+  display_as_transposed_matrix(matrix_type_files)
 end
