@@ -29,19 +29,17 @@ end
 def convert_mode_number_to_symbol(number)
   cut_numbers = number[-3, 3].chars
   permission_chars = ''
-  cut_numbers.each do |n|
-    permission_chars += (0..2).map { |i| (n.to_i & 0b100 >> i).zero? ? '-' : 'rwx'[i] }.join
-  end
+  permission_chars += cut_numbers.map do |n|
+    (0..2).map { |i| (n.to_i & 0b100 >> i).zero? ? '-' : 'rwx'[i] }.join
+  end.join
+
   permission_chars
 end
 
 def get_timestamp(fstat)
   date = fstat.ctime
-  if Date.today.year == date.year
-    date.strftime('%_m %_d %R')
-  else
-    date.strftime('%_m %_d  %Y')
-  end
+  date_arg = Date.today.year == date.year ? '%_m %_d %R' : '%_m %_d  %Y'
+  date.strftime(date_arg)
 end
 
 def get_matrix_type_files(files, file_names, display_col_size)
@@ -54,7 +52,7 @@ def get_matrix_type_files(files, file_names, display_col_size)
   matrix_type_files
 end
 
-def display_as_transposed_matrix(matrix_type_files)
+def display_with_not_l_option(matrix_type_files)
   disp_file_names = matrix_type_files.transpose
   disp_file_names.each do |disp_files|
     disp_files.each do |file|
@@ -100,22 +98,14 @@ display_col_size = 3
 if l_flag
   files = file_names.map do |name|
     hash = { name: }
-    if FileTest.symlink?(name)
-      file_stat = File.lstat(name)
-      hash[:readlink] = " -> #{File.readlink(name)}"
-    else
-      file_stat = File.stat(name)
-      hash[:readlink] = ''
-    end
+    file_stat = FileTest.symlink?(name) ? File.lstat(name) : File.stat(name)
+    hash[:readlink] = FileTest.symlink?(name) ? " -> #{File.readlink(name)}" : ''
     permission_numbers = file_stat.mode.to_s(8)
-    permission_chars = convert_mode_number_to_symbol(permission_numbers)
-    hash[:permission] = permission_chars
+    hash[:permission] = convert_mode_number_to_symbol(permission_numbers)
     hash[:mode] = get_ftype(file_stat)
     hash[:hardlink] = file_stat.nlink.to_s
-    u_id = file_stat.uid
-    hash[:owner] = Etc.getpwuid(u_id).name
-    g_id = file_stat.gid
-    hash[:group] = Etc.getgrgid(g_id).name
+    hash[:owner] = Etc.getpwuid(file_stat.uid).name
+    hash[:group] = Etc.getgrgid(file_stat.gid).name
     hash[:size] = file_stat.size.to_s
     hash[:timestamp] = get_timestamp(file_stat)
     hash
@@ -129,5 +119,5 @@ else
     { name: }
   end
   matrix_type_files = get_matrix_type_files(files, file_names, display_col_size)
-  display_as_transposed_matrix(matrix_type_files)
+  display_with_not_l_option(matrix_type_files)
 end
