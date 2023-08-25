@@ -52,7 +52,7 @@ def get_matrix_type_files(files, file_names, display_col_size)
   matrix_type_files
 end
 
-def display_with_not_l_option(matrix_type_files)
+def display_multiple_array(matrix_type_files)
   disp_file_names = matrix_type_files.transpose
   disp_file_names.each do |disp_files|
     disp_files.each do |file|
@@ -62,7 +62,7 @@ def display_with_not_l_option(matrix_type_files)
   end
 end
 
-def display_with_l_option(files, total_blocksize)
+def display_detailed_information(files, total_blocksize)
   puts "total #{total_blocksize}"
   files.each do |file|
     print file[:mode] + file[:permission] + file[:hardlink].rjust(5) + file[:owner].rjust(10)
@@ -112,12 +112,12 @@ if l_flag
   end
 
   total_blocksize = comupute_total_blocksize(files)
-  display_with_l_option(files, total_blocksize)
+  display_detailed_information(files, total_blocksize)
 
 else
   files = file_names.map do |name|
     { name: }
   end
   matrix_type_files = get_matrix_type_files(files, file_names, display_col_size)
-  display_with_not_l_option(matrix_type_files)
+  display_multiple_array(matrix_type_files)
 end
