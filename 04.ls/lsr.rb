@@ -76,15 +76,15 @@ arg = ['*']
 reverse_flag = false
 l_flag = false
 
-# opt.on('-a [val]') do |_flag|
-#   arg << File::FNM_DOTMATCH
-# end
+opt.on('-a') do |_flag|
+  arg << File::FNM_DOTMATCH
+end
 
-# opt.on('-r [val]') do |_flag|
-#   reverse_flag = true
-# end
+opt.on('-r') do |_flag|
+  reverse_flag = true
+end
 
-opt.on('-l [val]') do |_flag|
+opt.on('-l') do |_flag|
   l_flag = true
 end
 opt.parse!(ARGV)
