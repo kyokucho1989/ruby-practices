@@ -52,7 +52,7 @@ def get_matrix_type_files(files, file_names, display_col_size)
   matrix_type_files
 end
 
-def display_multiple_array(matrix_type_files)
+def display_multiple_columns(matrix_type_files)
   disp_file_names = matrix_type_files.transpose
   disp_file_names.each do |disp_files|
     disp_files.each do |file|
@@ -119,5 +119,5 @@ else
     { name: }
   end
   matrix_type_files = get_matrix_type_files(files, file_names, display_col_size)
-  display_multiple_array(matrix_type_files)
+  display_multiple_columns(matrix_type_files)
 end
