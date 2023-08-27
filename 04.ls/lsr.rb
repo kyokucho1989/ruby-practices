@@ -32,7 +32,6 @@ def convert_mode_number_to_symbol(number)
   permission_chars += cut_numbers.map do |n|
     (0..2).map { |i| (n.to_i & 0b100 >> i).zero? ? '-' : 'rwx'[i] }.join
   end.join
-
   permission_chars
 end
 
@@ -71,32 +70,8 @@ def display_detailed_information(files, total_blocksize)
   end
 end
 
-opt = OptionParser.new
-arg = ['*']
-reverse_flag = false
-l_flag = false
-
-# opt.on('-a [val]') do |_flag|
-#   arg << File::FNM_DOTMATCH
-# end
-
-# opt.on('-r [val]') do |_flag|
-#   reverse_flag = true
-# end
-
-opt.on('-l [val]') do |_flag|
-  l_flag = true
-end
-opt.parse!(ARGV)
-file_names = Dir.glob(*arg).then { |result| reverse_flag ? result.reverse : result }
-
-first_file_name = file_names[0]
-permission_numbers = File.stat(first_file_name).mode.to_s(8)
-
-display_col_size = 3
-
-if l_flag
-  files = file_names.map do |name|
+def get_file_detail_data(file_names)
+  file_names.map do |name|
     hash = { name: }
     file_stat = FileTest.symlink?(name) ? File.lstat(name) : File.stat(name)
     hash[:readlink] = FileTest.symlink?(name) ? " -> #{File.readlink(name)}" : ''
@@ -110,14 +85,41 @@ if l_flag
     hash[:timestamp] = get_timestamp(file_stat)
     hash
   end
-
-  total_blocksize = comupute_total_blocksize(files)
-  display_detailed_information(files, total_blocksize)
-
-else
-  files = file_names.map do |name|
-    { name: }
-  end
-  matrix_type_files = get_matrix_type_files(files, file_names, display_col_size)
-  display_multiple_columns(matrix_type_files)
 end
+
+def display_file_data(l_flag, file_names, display_col_size)
+  if l_flag
+    files = get_file_detail_data(file_names)
+    total_blocksize = comupute_total_blocksize(files)
+    display_detailed_information(files, total_blocksize)
+  else
+    files = file_names.map { |name| { name: } }
+    matrix_type_files = get_matrix_type_files(files, file_names, display_col_size)
+    display_multiple_columns(matrix_type_files)
+  end
+end
+
+def main
+  opt = OptionParser.new
+  arg = ['*']
+  reverse_flag = false
+  l_flag = false
+  opt.on('-a') do |_flag|
+    arg << File::FNM_DOTMATCH
+  end
+
+  opt.on('-r') do |_flag|
+    reverse_flag = true
+  end
+
+  opt.on('-l') do |_flag|
+    l_flag = true
+  end
+  opt.parse!(ARGV)
+  file_names = Dir.glob(*arg).then { |result| reverse_flag ? result.reverse : result }
+  display_col_size = 3
+
+  display_file_data(l_flag, file_names, display_col_size)
+end
+
+main
