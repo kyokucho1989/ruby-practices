@@ -2,8 +2,6 @@
 # frozen_string_literal: true
 
 require 'optparse'
-require 'etc'
-require 'date'
 
 def get_disp_flag(c_flag, l_flag, w_flag)
   normal_flag = !(w_flag || c_flag || l_flag)
