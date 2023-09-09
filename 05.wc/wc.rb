@@ -30,9 +30,9 @@ def display_file_data(has_c_option, has_l_option, has_w_option, file_name = '', 
   puts display
 end
 
-def generate_file_data_one_line(has_c_option, has_l_option, has_w_option, file_list)
+def generate_file_data_one_line(has_c_option, has_l_option, has_w_option, files)
   file_size_total = { row: 0, word: 0, byte: 0 }
-  file_list.each do |file|
+  files.each do |file|
     str = File.read(file)
     row_size, word_size, byte_size = compute_file_size(str)
     disp_file_data(has_c_option, has_l_option, has_w_option, file, row_size:, word_size:, byte_size:)
@@ -43,7 +43,7 @@ def generate_file_data_one_line(has_c_option, has_l_option, has_w_option, file_l
   row_size = file_size_total[:row]
   word_size = file_size_total[:word]
   byte_size = file_size_total[:byte]
-  disp_file_data(has_c_option, has_l_option, has_w_option, 'total', row_size:, word_size:, byte_size:) if file_list.size > 1
+  disp_file_data(has_c_option, has_l_option, has_w_option, 'total', row_size:, word_size:, byte_size:) if files.size > 1
 end
 
 def main
@@ -56,10 +56,10 @@ def main
   opt.on('-w') { |_flag| has_w_option = true }
   opt.parse!(ARGV)
   has_c_option, has_l_option, has_w_option = display_flag(has_c_option, has_l_option, has_w_option)
-  file_list = ARGV
+  files = ARGV
 
-  if file_list.size.positive?
-    generate_file_data_one_line(has_c_option, has_l_option, has_w_option, file_list)
+  if files.size.positive?
+    generate_file_data_one_line(has_c_option, has_l_option, has_w_option, files)
 
   else
     while (line = gets(nil))
