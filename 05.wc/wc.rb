@@ -3,12 +3,12 @@
 
 require 'optparse'
 
-def display_flag(c_flag, l_flag, w_flag)
-  normal_flag = !(w_flag || c_flag || l_flag)
-  c_flag ||= normal_flag
-  l_flag ||= normal_flag
-  w_flag ||= normal_flag
-  [c_flag, l_flag, w_flag]
+def display_flag(has_c_option, has_l_option, has_w_option)
+  has_no_options = !(has_w_option || has_c_option || has_l_option)
+  has_c_option ||= has_no_options
+  has_l_option ||= has_no_options
+  has_w_option ||= has_no_options
+  [has_c_option, has_l_option, has_w_option]
 end
 
 def compute_file_size(str)
@@ -18,24 +18,24 @@ def compute_file_size(str)
   [row_size, word_size, byte_size]
 end
 
-def display_file_data(c_flag, l_flag, w_flag, file_name = '', **size)
+def display_file_data(has_c_option, has_l_option, has_w_option, file_name = '', **size)
   row_size = size[:row_size]
   word_size = size[:word_size]
   byte_size = size[:byte_size]
   display = ''
-  display += row_size.to_s.rjust(8) if l_flag
-  display += word_size.to_s.rjust(8) if w_flag
-  display += byte_size.to_s.rjust(8) if c_flag
+  display += row_size.to_s.rjust(8) if has_l_option
+  display += word_size.to_s.rjust(8) if has_w_option
+  display += byte_size.to_s.rjust(8) if has_c_option
   display += " #{file_name}"
   puts display
 end
 
-def generate_file_data_one_line(c_flag, l_flag, w_flag, file_list)
+def generate_file_data_one_line(has_c_option, has_l_option, has_w_option, file_list)
   file_size_total = { row: 0, word: 0, byte: 0 }
   file_list.each do |file|
     str = File.read(file)
     row_size, word_size, byte_size = compute_file_size(str)
-    disp_file_data(c_flag, l_flag, w_flag, file, row_size:, word_size:, byte_size:)
+    disp_file_data(has_c_option, has_l_option, has_w_option, file, row_size:, word_size:, byte_size:)
     file_size_total[:row] += row_size
     file_size_total[:word] += word_size
     file_size_total[:byte] += byte_size
@@ -43,28 +43,28 @@ def generate_file_data_one_line(c_flag, l_flag, w_flag, file_list)
   row_size = file_size_total[:row]
   word_size = file_size_total[:word]
   byte_size = file_size_total[:byte]
-  disp_file_data(c_flag, l_flag, w_flag, 'total', row_size:, word_size:, byte_size:) if file_list.size > 1
+  disp_file_data(has_c_option, has_l_option, has_w_option, 'total', row_size:, word_size:, byte_size:) if file_list.size > 1
 end
 
 def main
   opt = OptionParser.new
-  c_flag = false
-  l_flag = false
-  w_flag = false
-  opt.on('-c') { |_flag| c_flag = true }
-  opt.on('-l') { |_flag| l_flag = true }
-  opt.on('-w') { |_flag| w_flag = true }
+  has_c_option = false
+  has_l_option = false
+  has_w_option = false
+  opt.on('-c') { |_flag| has_c_option = true }
+  opt.on('-l') { |_flag| has_l_option = true }
+  opt.on('-w') { |_flag| has_w_option = true }
   opt.parse!(ARGV)
-  c_flag, l_flag, w_flag = display_flag(c_flag, l_flag, w_flag)
+  has_c_option, has_l_option, has_w_option = display_flag(has_c_option, has_l_option, has_w_option)
   file_list = ARGV
 
   if file_list.size.positive?
-    generate_file_data_one_line(c_flag, l_flag, w_flag, file_list)
+    generate_file_data_one_line(has_c_option, has_l_option, has_w_option, file_list)
 
   else
     while (line = gets(nil))
-      row_size, word_size, byte_size = calc_file_size(line)
-      display_file_data(c_flag, l_flag, w_flag, row_size:, word_size:, byte_size:)
+      row_size, word_size, byte_size = compute_file_size(line)
+      display_file_data(has_c_option, has_l_option, has_w_option, row_size:, word_size:, byte_size:)
     end
   end
 end
