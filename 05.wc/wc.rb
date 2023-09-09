@@ -26,7 +26,7 @@ def display_file_data(display_set, file_name = '', **size)
   display += row_size.to_s.rjust(8) if display_set[:is_display_lines]
   display += word_size.to_s.rjust(8) if display_set[:is_display_words]
   display += byte_size.to_s.rjust(8) if display_set[:is_display_bytes]
-  display += " #{file_name}"
+  display += " #{file_name}" if !file_name.empty?
   puts display
 end
 
