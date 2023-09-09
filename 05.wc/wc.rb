@@ -18,7 +18,7 @@ def compute_file_size(str)
   [row_size, word_size, byte_size]
 end
 
-def display_file_data(display_set, file_name = '', **size)
+def display_file_data(display_set, size, file_name = '')
   row_size = size[:row_size]
   word_size = size[:word_size]
   byte_size = size[:byte_size]
@@ -31,19 +31,17 @@ def display_file_data(display_set, file_name = '', **size)
 end
 
 def generate_file_data_one_line(display_set, files)
-  file_size_total = { row: 0, word: 0, byte: 0 }
+  file_size_total = { row_size: 0, word_size: 0, byte_size: 0 }
   files.each do |file|
     str = File.read(file)
-    row_size, word_size, byte_size = compute_file_size(str)
-    display_file_data(display_set, file, row_size:, word_size:, byte_size:)
-    file_size_total[:row] += row_size
-    file_size_total[:word] += word_size
-    file_size_total[:byte] += byte_size
+    sizes = compute_file_size(str)
+    size_hash = { row_size: sizes[0], word_size: sizes[1], byte_size: sizes[2] }
+    display_file_data(display_set, size_hash, file)
+    file_size_total[:row_size] += size_hash[:row_size]
+    file_size_total[:word_size] += size_hash[:word_size]
+    file_size_total[:byte_size] += size_hash[:byte_size]
   end
-  row_size = file_size_total[:row]
-  word_size = file_size_total[:word]
-  byte_size = file_size_total[:byte]
-  display_file_data(display_set, 'total', row_size:, word_size:, byte_size:) if files.size > 1
+  display_file_data(display_set, file_size_total, 'total') if files.size > 1
 end
 
 def main
@@ -62,8 +60,9 @@ def main
     generate_file_data_one_line(display_set, files)
   else
     while (line = gets(nil))
-      row_size, word_size, byte_size = compute_file_size(line)
-      display_file_data(display_set, row_size:, word_size:, byte_size:)
+      sizes = compute_file_size(line)
+      size_hash = { row_size: sizes[0], word_size: sizes[1], byte_size: sizes[2] }
+      display_file_data(display_set, size_hash)
     end
   end
 end
