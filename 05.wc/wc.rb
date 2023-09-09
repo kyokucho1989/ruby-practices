@@ -3,7 +3,7 @@
 
 require 'optparse'
 
-def get_disp_flag(c_flag, l_flag, w_flag)
+def display_flag(c_flag, l_flag, w_flag)
   normal_flag = !(w_flag || c_flag || l_flag)
   c_flag ||= normal_flag
   l_flag ||= normal_flag
@@ -11,14 +11,14 @@ def get_disp_flag(c_flag, l_flag, w_flag)
   [c_flag, l_flag, w_flag]
 end
 
-def calc_file_size(str)
+def compute_file_size(str)
   row_size =  str.count("\n")
   word_size = str.split(' ').size
   byte_size = str.size
   [row_size, word_size, byte_size]
 end
 
-def disp_file_data(c_flag, l_flag, w_flag, file_name = '', **size)
+def display_file_data(c_flag, l_flag, w_flag, file_name = '', **size)
   row_size = size[:row_size]
   word_size = size[:word_size]
   byte_size = size[:byte_size]
@@ -34,7 +34,7 @@ def generate_file_data_one_line(c_flag, l_flag, w_flag, file_list)
   file_size_total = { row: 0, word: 0, byte: 0 }
   file_list.each do |file|
     str = File.read(file)
-    row_size, word_size, byte_size = calc_file_size(str)
+    row_size, word_size, byte_size = compute_file_size(str)
     disp_file_data(c_flag, l_flag, w_flag, file, row_size:, word_size:, byte_size:)
     file_size_total[:row] += row_size
     file_size_total[:word] += word_size
@@ -55,7 +55,7 @@ def main
   opt.on('-l') { |_flag| l_flag = true }
   opt.on('-w') { |_flag| w_flag = true }
   opt.parse!(ARGV)
-  c_flag, l_flag, w_flag = get_disp_flag(c_flag, l_flag, w_flag)
+  c_flag, l_flag, w_flag = display_flag(c_flag, l_flag, w_flag)
   file_list = ARGV
 
   if file_list.size.positive?
@@ -64,7 +64,7 @@ def main
   else
     while (line = gets(nil))
       row_size, word_size, byte_size = calc_file_size(line)
-      disp_file_data(c_flag, l_flag, w_flag, row_size:, word_size:, byte_size:)
+      display_file_data(c_flag, l_flag, w_flag, row_size:, word_size:, byte_size:)
     end
   end
 end
