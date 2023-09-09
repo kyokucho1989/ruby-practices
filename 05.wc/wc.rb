@@ -5,10 +5,10 @@ require 'optparse'
 
 def display_flag(has_c_option, has_l_option, has_w_option)
   has_no_options = !(has_w_option || has_c_option || has_l_option)
-  has_c_option ||= has_no_options
-  has_l_option ||= has_no_options
-  has_w_option ||= has_no_options
-  [has_c_option, has_l_option, has_w_option]
+  is_display_bytes = has_c_option || has_no_options
+  is_display_lines = has_l_option || has_no_options
+  is_display_words = has_w_option || has_no_options
+  [is_display_bytes, is_display_lines, is_display_words]
 end
 
 def compute_file_size(str)
@@ -30,12 +30,12 @@ def display_file_data(has_c_option, has_l_option, has_w_option, file_name = '', 
   puts display
 end
 
-def generate_file_data_one_line(has_c_option, has_l_option, has_w_option, files)
+def generate_file_data_one_line(is_display_bytes, is_display_lines, is_display_words, files)
   file_size_total = { row: 0, word: 0, byte: 0 }
   files.each do |file|
     str = File.read(file)
     row_size, word_size, byte_size = compute_file_size(str)
-    disp_file_data(has_c_option, has_l_option, has_w_option, file, row_size:, word_size:, byte_size:)
+    disp_file_data(is_display_bytes, is_display_lines, is_display_words, file, row_size:, word_size:, byte_size:)
     file_size_total[:row] += row_size
     file_size_total[:word] += word_size
     file_size_total[:byte] += byte_size
@@ -43,7 +43,7 @@ def generate_file_data_one_line(has_c_option, has_l_option, has_w_option, files)
   row_size = file_size_total[:row]
   word_size = file_size_total[:word]
   byte_size = file_size_total[:byte]
-  disp_file_data(has_c_option, has_l_option, has_w_option, 'total', row_size:, word_size:, byte_size:) if files.size > 1
+  disp_file_data(is_display_bytes, is_display_lines, is_display_words, 'total', row_size:, word_size:, byte_size:) if files.size > 1
 end
 
 def main
@@ -55,16 +55,16 @@ def main
   opt.on('-l') { |_flag| has_l_option = true }
   opt.on('-w') { |_flag| has_w_option = true }
   opt.parse!(ARGV)
-  has_c_option, has_l_option, has_w_option = display_flag(has_c_option, has_l_option, has_w_option)
+  is_display_bytes, is_display_lines, is_display_words = display_flag(has_c_option, has_l_option, has_w_option)
   files = ARGV
 
   if files.size.positive?
-    generate_file_data_one_line(has_c_option, has_l_option, has_w_option, files)
+    generate_file_data_one_line(is_display_bytes, is_display_lines, is_display_words, files)
 
   else
     while (line = gets(nil))
       row_size, word_size, byte_size = compute_file_size(line)
-      display_file_data(has_c_option, has_l_option, has_w_option, row_size:, word_size:, byte_size:)
+      display_file_data(is_display_bytes, is_display_bytes, is_display_words, row_size:, word_size:, byte_size:)
     end
   end
 end
