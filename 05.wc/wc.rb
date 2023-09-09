@@ -48,14 +48,14 @@ end
 
 def main
   opt = OptionParser.new
-  options = { has_c_option: false, has_l_option: false, has_w_option: false}
+  options = { has_c_option: false, has_l_option: false, has_w_option: false }
   opt.on('-c') { |_flag| options[:has_c_option] = true }
   opt.on('-l') { |_flag| options[:has_l_option] = true }
   opt.on('-w') { |_flag| options[:has_w_option] = true }
   opt.parse!(ARGV)
-  
+
   flags = display_flag(options)
-  display_set = {is_display_bytes: flags[0], is_display_lines: flags[1], is_display_words: flags[2]} 
+  display_set = { is_display_bytes: flags[0], is_display_lines: flags[1], is_display_words: flags[2] }
   files = ARGV
 
   if files.size.positive?
@@ -66,7 +66,6 @@ def main
       display_file_data(display_set, row_size:, word_size:, byte_size:)
     end
   end
-
 end
 
 main
