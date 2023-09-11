@@ -21,7 +21,7 @@ def compute_file_size(str)
   row_size =  str.count("\n")
   word_size = str.split(' ').size
   byte_size = str.size
-  [row_size, word_size, byte_size]
+  { row_size:, word_size:, byte_size: }
 end
 
 def display_file_data(display_set, size, file_name = '')
@@ -40,8 +40,7 @@ def generate_file_data_one_line(display_set, files)
   file_size_total = { row_size: 0, word_size: 0, byte_size: 0 }
   files.each do |file|
     str = File.read(file)
-    sizes = compute_file_size(str)
-    size_hash = { row_size: sizes[0], word_size: sizes[1], byte_size: sizes[2] }
+    size_hash = compute_file_size(str)
     display_file_data(display_set, size_hash, file)
     file_size_total[:row_size] += size_hash[:row_size]
     file_size_total[:word_size] += size_hash[:word_size]
@@ -59,8 +58,7 @@ def main
     generate_file_data_one_line(display_set, files)
   else
     while (line = gets(nil))
-      sizes = compute_file_size(line)
-      size_hash = { row_size: sizes[0], word_size: sizes[1], byte_size: sizes[2] }
+      size_hash = compute_file_size(line)
       display_file_data(display_set, size_hash)
     end
   end
