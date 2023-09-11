@@ -3,7 +3,13 @@
 
 require 'optparse'
 
-def display_flag(options)
+def booleans_display_or_hide
+  opt = OptionParser.new
+  options = { has_c_option: false, has_l_option: false, has_w_option: false }
+  opt.on('-c') { |_flag| options[:has_c_option] = true }
+  opt.on('-l') { |_flag| options[:has_l_option] = true }
+  opt.on('-w') { |_flag| options[:has_w_option] = true }
+  opt.parse!(ARGV)
   has_no_options = !(options[:has_c_option] || options[:has_l_option] || options[:has_w_option])
   is_display_bytes = options[:has_c_option] || has_no_options
   is_display_lines = options[:has_l_option] || has_no_options
@@ -45,15 +51,8 @@ def generate_file_data_one_line(display_set, files)
 end
 
 def main
-  opt = OptionParser.new
-  options = { has_c_option: false, has_l_option: false, has_w_option: false }
-  opt.on('-c') { |_flag| options[:has_c_option] = true }
-  opt.on('-l') { |_flag| options[:has_l_option] = true }
-  opt.on('-w') { |_flag| options[:has_w_option] = true }
-  opt.parse!(ARGV)
-
-  flags = display_flag(options)
-  display_set = { is_display_bytes: flags[0], is_display_lines: flags[1], is_display_words: flags[2] }
+  booleans = booleans_display_or_hide
+  display_set = { is_display_bytes: booleans[0], is_display_lines: booleans[1], is_display_words: booleans[2] }
   files = ARGV
 
   if files.size.positive?
