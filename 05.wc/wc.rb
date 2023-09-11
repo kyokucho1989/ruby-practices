@@ -36,7 +36,7 @@ def display_file_data(display_set, size, file_name = '')
   puts display
 end
 
-def generate_file_data_one_line(display_set, files)
+def display_file_data_one_line(display_set, files)
   file_size_total = { row_size: 0, word_size: 0, byte_size: 0 }
   files.each do |file|
     str = File.read(file)
@@ -55,7 +55,7 @@ def main
   files = ARGV
 
   if files.size.positive?
-    generate_file_data_one_line(display_set, files)
+    display_file_data_one_line(display_set, files)
   else
     while (line = gets(nil))
       size_hash = compute_file_size(line)
