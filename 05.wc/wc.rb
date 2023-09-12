@@ -14,7 +14,7 @@ def booleans_display_or_hide
   is_display_bytes = options[:has_c_option] || has_no_options
   is_display_lines = options[:has_l_option] || has_no_options
   is_display_words = options[:has_w_option] || has_no_options
-  [is_display_bytes, is_display_lines, is_display_words]
+  {is_display_bytes:, is_display_lines:, is_display_words: }
 end
 
 def compute_file_size(str)
@@ -65,8 +65,7 @@ end
 
 
 def main
-  booleans = booleans_display_or_hide
-  display_set = { is_display_bytes: booleans[0], is_display_lines: booleans[1], is_display_words: booleans[2] }
+  display_set = booleans_display_or_hide
   files = ARGV
   file_name_set = files.map do |file|
     {file_name: file}
