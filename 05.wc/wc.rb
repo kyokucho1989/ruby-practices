@@ -36,26 +36,45 @@ def display_file_data(display_set, size, file_name = '')
   puts display
 end
 
-def display_file_data_one_line(display_set, files)
-  file_size_total = { row_size: 0, word_size: 0, byte_size: 0 }
-  files.each do |file|
-    str = File.read(file)
-    size_hash = compute_file_size(str)
-    display_file_data(display_set, size_hash, file)
-    file_size_total[:row_size] += size_hash[:row_size]
-    file_size_total[:word_size] += size_hash[:word_size]
-    file_size_total[:byte_size] += size_hash[:byte_size]
+def display_file_data_one_line(display_set, file_set, file_size_total)
+  file_set.each do |file|
+    size_hash = file.slice(:row_size,:word_size,:byte_size)  
+    display_file_data(display_set, size_hash, file[:file_name])
   end
-  display_file_data(display_set, file_size_total, 'total') if files.size > 1
+  display_file_data(display_set, file_size_total, 'total') if file_set.size > 1
 end
+
+def compute_file_size_total(file_set)
+  file_size_total = { row_size: 0, word_size: 0, byte_size: 0 }
+  file_set.each do |file|
+    file_size_total[:row_size] += file[:row_size]
+    file_size_total[:word_size] += file[:word_size]
+    file_size_total[:byte_size] += file[:byte_size]
+  end
+  file_size_total
+end
+
+def add_file_size(file_name_set)
+  file_set = file_name_set.map { |file|
+    str = File.read(file[:file_name])  
+    file.merge!(compute_file_size(str))
+    file
+  }
+  file_set
+end
+
 
 def main
   booleans = booleans_display_or_hide
   display_set = { is_display_bytes: booleans[0], is_display_lines: booleans[1], is_display_words: booleans[2] }
   files = ARGV
-
+  file_name_set = files.map do |file|
+    {file_name: file}
+  end
+  file_set = add_file_size(file_name_set)
+  file_size_total = compute_file_size_total(file_set)
   if files.size.positive?
-    display_file_data_one_line(display_set, files)
+    display_file_data_one_line(display_set, file_set, file_size_total)
   else
     while (line = gets(nil))
       size_hash = compute_file_size(line)
