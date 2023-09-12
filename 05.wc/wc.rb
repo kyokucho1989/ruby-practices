@@ -14,7 +14,7 @@ def booleans_display_or_hide
   is_display_bytes = options[:has_c_option] || has_no_options
   is_display_lines = options[:has_l_option] || has_no_options
   is_display_words = options[:has_w_option] || has_no_options
-  {is_display_bytes:, is_display_lines:, is_display_words: }
+  { is_display_bytes:, is_display_lines:, is_display_words: }
 end
 
 def compute_file_size(str)
@@ -38,7 +38,7 @@ end
 
 def display_file_data_one_line(display_set, file_set, file_size_total)
   file_set.each do |file|
-    size_hash = file.slice(:row_size,:word_size,:byte_size)  
+    size_hash = file.slice(:row_size, :word_size, :byte_size)
     display_file_data(display_set, size_hash, file[:file_name])
   end
   display_file_data(display_set, file_size_total, 'total') if file_set.size > 1
@@ -55,20 +55,18 @@ def compute_file_size_total(file_set)
 end
 
 def add_file_size(file_name_set)
-  file_set = file_name_set.map { |file|
-    str = File.read(file[:file_name])  
+  file_name_set.map do |file|
+    str = File.read(file[:file_name])
     file.merge!(compute_file_size(str))
     file
-  }
-  file_set
+  end
 end
-
 
 def main
   display_set = booleans_display_or_hide
   files = ARGV
   file_name_set = files.map do |file|
-    {file_name: file}
+    { file_name: file }
   end
   file_set = add_file_size(file_name_set)
   file_size_total = compute_file_size_total(file_set)
