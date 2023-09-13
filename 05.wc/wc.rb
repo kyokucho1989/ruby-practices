@@ -54,24 +54,21 @@ def compute_file_sizes_total(file_set)
   file_sizes_total
 end
 
-def add_file_size(file_name_set)
-  file_name_set.map do |file|
-    str = File.read(file[:file_name])
-    file.merge!(compute_file_sizes(str))
-    file
+def build_file_sizes_with_names(files)
+  files.map do |file|
+    file_names = { file_name: file }
+    str = File.read(file)
+    file_names.merge!(compute_file_sizes(str))
   end
 end
 
 def main
   display_set = build_display_status_from_options
   files = ARGV
-  file_name_set = files.map do |file|
-    { file_name: file }
-  end
-  file_set = add_file_size(file_name_set)
-  file_sizes_total = compute_file_sizes_total(file_set)
+  file_sizes_with_names = build_file_sizes_with_names(files)
+  file_sizes_total = compute_file_sizes_total(file_sizes_with_names)
   if files.size.positive?
-    display_file_data_one_line(display_set, file_set, file_sizes_total)
+    display_file_data_one_line(display_set, file_sizes_with_names, file_sizes_total)
   else
     while (line = gets(nil))
       file_sizes = compute_file_sizes(line)
