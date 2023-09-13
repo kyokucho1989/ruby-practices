@@ -3,7 +3,7 @@
 
 require 'optparse'
 
-def booleans_display_or_hide
+def build_display_status_from_options
   opt = OptionParser.new
   options = { has_c_option: false, has_l_option: false, has_w_option: false }
   opt.on('-c') { |_flag| options[:has_c_option] = true }
@@ -17,17 +17,17 @@ def booleans_display_or_hide
   { is_display_bytes:, is_display_lines:, is_display_words: }
 end
 
-def compute_file_size(str)
+def compute_file_sizes(str)
   row_size =  str.count("\n")
   word_size = str.split(' ').size
   byte_size = str.size
   { row_size:, word_size:, byte_size: }
 end
 
-def display_file_data(display_set, size, file_name = '')
-  row_size = size[:row_size]
-  word_size = size[:word_size]
-  byte_size = size[:byte_size]
+def display_file_data(display_set, file_size_set, file_name = '')
+  row_size = file_size_set[:row_size]
+  word_size = file_size_set[:word_size]
+  byte_size = file_size_set[:byte_size]
   display = ''
   display += row_size.to_s.rjust(8) if display_set[:is_display_lines]
   display += word_size.to_s.rjust(8) if display_set[:is_display_words]
@@ -36,46 +36,46 @@ def display_file_data(display_set, size, file_name = '')
   puts display
 end
 
-def display_file_data_one_line(display_set, file_set, file_size_total)
+def display_file_data_one_line(display_set, file_set, file_sizes_total)
   file_set.each do |file|
-    size_hash = file.slice(:row_size, :word_size, :byte_size)
-    display_file_data(display_set, size_hash, file[:file_name])
+    sizes = file.slice(:row_size, :word_size, :byte_size)
+    display_file_data(display_set, sizes, file[:file_name])
   end
-  display_file_data(display_set, file_size_total, 'total') if file_set.size > 1
+  display_file_data(display_set, file_sizes_total, 'total') if file_set.size > 1
 end
 
-def compute_file_size_total(file_set)
-  file_size_total = { row_size: 0, word_size: 0, byte_size: 0 }
+def compute_file_sizes_total(file_set)
+  file_sizes_total = { row_size: 0, word_size: 0, byte_size: 0 }
   file_set.each do |file|
-    file_size_total[:row_size] += file[:row_size]
-    file_size_total[:word_size] += file[:word_size]
-    file_size_total[:byte_size] += file[:byte_size]
+    file_sizes_total[:row_size] += file[:row_size]
+    file_sizes_total[:word_size] += file[:word_size]
+    file_sizes_total[:byte_size] += file[:byte_size]
   end
-  file_size_total
+  file_sizes_total
 end
 
 def add_file_size(file_name_set)
   file_name_set.map do |file|
     str = File.read(file[:file_name])
-    file.merge!(compute_file_size(str))
+    file.merge!(compute_file_sizes(str))
     file
   end
 end
 
 def main
-  display_set = booleans_display_or_hide
+  display_set = build_display_status_from_options
   files = ARGV
   file_name_set = files.map do |file|
     { file_name: file }
   end
   file_set = add_file_size(file_name_set)
-  file_size_total = compute_file_size_total(file_set)
+  file_sizes_total = compute_file_sizes_total(file_set)
   if files.size.positive?
-    display_file_data_one_line(display_set, file_set, file_size_total)
+    display_file_data_one_line(display_set, file_set, file_sizes_total)
   else
     while (line = gets(nil))
-      size_hash = compute_file_size(line)
-      display_file_data(display_set, size_hash)
+      sizes = compute_file_sizes(line)
+      display_file_data(display_set, sizes)
     end
   end
 end
