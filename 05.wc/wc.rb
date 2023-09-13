@@ -24,10 +24,10 @@ def compute_file_sizes(str)
   { row_size:, word_size:, byte_size: }
 end
 
-def display_file_data(display_set, file_size_set, file_name = '')
-  row_size = file_size_set[:row_size]
-  word_size = file_size_set[:word_size]
-  byte_size = file_size_set[:byte_size]
+def display_file_data(display_set, file_sizes, file_name = '')
+  row_size = file_sizes[:row_size]
+  word_size = file_sizes[:word_size]
+  byte_size = file_sizes[:byte_size]
   display = ''
   display += row_size.to_s.rjust(8) if display_set[:is_display_lines]
   display += word_size.to_s.rjust(8) if display_set[:is_display_words]
@@ -38,8 +38,8 @@ end
 
 def display_file_data_one_line(display_set, file_set, file_sizes_total)
   file_set.each do |file|
-    sizes = file.slice(:row_size, :word_size, :byte_size)
-    display_file_data(display_set, sizes, file[:file_name])
+    file_sizes = file.slice(:row_size, :word_size, :byte_size)
+    display_file_data(display_set, file_sizes, file[:file_name])
   end
   display_file_data(display_set, file_sizes_total, 'total') if file_set.size > 1
 end
@@ -74,8 +74,8 @@ def main
     display_file_data_one_line(display_set, file_set, file_sizes_total)
   else
     while (line = gets(nil))
-      sizes = compute_file_sizes(line)
-      display_file_data(display_set, sizes)
+      file_sizes = compute_file_sizes(line)
+      display_file_data(display_set, file_sizes)
     end
   end
 end
