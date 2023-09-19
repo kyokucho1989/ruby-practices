@@ -47,6 +47,7 @@ class Game
     frames_except_last = @frames[0..-2]
     frames_except_last.each_with_index do |frame, i|
       next unless frame.strike?
+
       strike_bonus += @frames[i + 1].first_shot.score
       strike_bonus += if @frames[i + 1].strike? && i < 8
                         @frames[i + 2].first_shot.score
