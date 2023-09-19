@@ -44,6 +44,23 @@ class Game
     end
     spare_bonus
   end
+
+  def compute_strike_bonus
+    strike_bonus = 0
+    frames_except_last = @frames[0..-2]
+    frames_except_last.each_with_index do |frame,i|
+      if frame.strike?
+        strike_bonus += @frames[i+1].first_shot.score
+        if @frames[i+1].strike? && i > 9
+          stirke_bonus += @frames[i+2].first_shot.score
+        else
+          strike_bonus += @frames[i+1].second_shot.score
+        end
+      end
+    end
+    strike_bonus
+  end
+
 end
 
 argvs = ARGV.first.split(',')
