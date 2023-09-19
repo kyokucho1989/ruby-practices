@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class Shot
   attr_reader :mark
 
@@ -11,7 +13,3 @@ class Shot
     mark.to_i
   end
 end
-
-# shot = Shot.new('X')
-# p shot.mark
-# p shot.score
