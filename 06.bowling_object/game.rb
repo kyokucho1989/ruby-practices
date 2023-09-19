@@ -4,8 +4,6 @@
 require_relative 'frame'
 
 class Game
-  attr_reader :frames
-
   def initialize(shots)
     @frames = []
     while shots.size > 3

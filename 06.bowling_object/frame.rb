@@ -23,11 +23,3 @@ class Frame
     @first_shot.score != 10 && (@first_shot.score + @second_shot.score == 10)
   end
 end
-
-# frame1 = Frame.new(1,3)
-# frame2 = Frame.new(7,3)
-# p frame1.frame_score
-# p frame1.spare?
-
-# p frame2.frame_score
-# p frame2.spare?
