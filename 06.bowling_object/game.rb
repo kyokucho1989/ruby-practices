@@ -20,12 +20,12 @@ class Game
   end
 
   def total_score
-    killed_pin_count + compute_spare_bonus + compute_strike_bonus
+    compute_shot_score + compute_spare_bonus + compute_strike_bonus
   end
 
   private
 
-  def killed_pin_count
+  def compute_shot_score
     pin = 0
     @frames.each do |frame|
       pin += frame.frame_score
