@@ -23,6 +23,8 @@ class Game
     killed_pin_count + compute_spare_bonus + compute_strike_bonus
   end
 
+  private
+
   def killed_pin_count
     pin = 0
     @frames.each do |frame|
@@ -45,7 +47,6 @@ class Game
     frames_except_last = @frames[0..-2]
     frames_except_last.each_with_index do |frame, i|
       next unless frame.strike?
-
       strike_bonus += @frames[i + 1].first_shot.score
       strike_bonus += if @frames[i + 1].strike? && i < 8
                         @frames[i + 2].first_shot.score
@@ -63,9 +64,4 @@ shots = argvs.map do |shot|
 end
 
 game = Game.new(shots)
-kill_counts = game.killed_pin_count
-spare_bonus = game.compute_spare_bonus
-strike_bonus = game.compute_strike_bonus
-total_score = game.total_score
-puts "倒した本数: #{kill_counts} / スペアボーナス : #{spare_bonus} / ストライクボーナス: #{strike_bonus} "
-puts "トータルスコア #{total_score}"
+puts game.total_score
