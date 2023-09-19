@@ -19,11 +19,16 @@ class Game
 
     end
     frame = shots.shift(shots.size)
-    frames << frame
-    # puts " frames:#{frames} "
+    @frames << Frame.new(*frame)
   end
 
 end
+
+argvs = ARGV.first.split(',')
+shots = argvs.map do |shot|
+  shot == 'X' ? shot : shot.to_i
+end
 # shots = [6,3,9,0,0,3,8,2,7,3,'X',9,1,8,0,'X','X','X','X']
 game = Game.new(shots)
+binding.irb
 # game.frames[0].first_shot.mark
