@@ -34,6 +34,16 @@ class Game
     pin
   end
 
+  def compute_spare_bonus
+    spare_bonus = 0
+    frames_except_last = @frames[0..-2]
+    frames_except_last.each_with_index do |frame,i|
+      if frame.spare?
+        spare_bonus += @frames[i+1].first_shot.score
+      end
+    end
+    spare_bonus
+  end
 end
 
 argvs = ARGV.first.split(',')
