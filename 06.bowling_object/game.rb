@@ -4,7 +4,6 @@
 require_relative 'frame'
 
 class Game
-
   attr_reader :frames
 
   def initialize(shots)
@@ -23,7 +22,7 @@ class Game
   end
 
   def total_score
-
+    killed_pin_count + compute_spare_bonus + compute_strike_bonus
   end
 
   def killed_pin_count
@@ -51,8 +50,8 @@ class Game
     frames_except_last.each_with_index do |frame,i|
       if frame.strike?
         strike_bonus += @frames[i+1].first_shot.score
-        if @frames[i+1].strike? && i > 9
-          stirke_bonus += @frames[i+2].first_shot.score
+        if @frames[i+1].strike? && i < 8
+          strike_bonus += @frames[i+2].first_shot.score
         else
           strike_bonus += @frames[i+1].second_shot.score
         end
@@ -69,5 +68,10 @@ shots = argvs.map do |shot|
 end
 # shots = [6,3,9,0,0,3,8,2,7,3,'X',9,1,8,0,'X','X','X','X']
 game = Game.new(shots)
-binding.irb
+kill_counts = game.killed_pin_count
+spare_bonus = game.compute_spare_bonus
+strike_bonus = game.compute_strike_bonus
+total_score = game.total_score
+puts "倒した本数: #{kill_counts} / スペアボーナス : #{spare_bonus} / ストライクボーナス: #{strike_bonus} "
+puts "トータルスコア #{total_score}"
 # game.frames[0].first_shot.mark
