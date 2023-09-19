@@ -22,6 +22,18 @@ class Game
     @frames << Frame.new(*frame)
   end
 
+  def total_score
+
+  end
+
+  def killed_pin_count
+    pin = 0
+    @frames.each do |frame|
+      pin += frame.frame_score
+    end
+    pin
+  end
+
 end
 
 argvs = ARGV.first.split(',')
