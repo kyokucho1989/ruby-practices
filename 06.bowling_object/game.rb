@@ -13,7 +13,6 @@ class Game
                 shots.shift(2)
               end
       @frames << Frame.new(*frame)
-
     end
     frame = shots.shift(shots.size)
     @frames << Frame.new(*frame)
