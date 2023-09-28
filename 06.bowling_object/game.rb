@@ -29,7 +29,7 @@ class Game
   private
 
   def compute_shot_score
-    @frames.sum { |frame| frame.frame_score }
+    @frames.sum(&:frame_score)
   end
 
   def compute_spare_bonus
