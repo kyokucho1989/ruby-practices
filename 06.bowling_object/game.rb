@@ -5,6 +5,10 @@ require_relative 'frame'
 
 class Game
   def initialize(shots)
+    shots = shots.map do |shot|
+      shot == 'X' ? shot : shot.to_i
+    end
+
     @frames = []
     while shots.size > 3
       frame = if shots[0] == 'X'
@@ -54,10 +58,6 @@ class Game
   end
 end
 
-argvs = ARGV.first.split(',')
-shots = argvs.map do |shot|
-  shot == 'X' ? shot : shot.to_i
-end
-
+shots = ARGV.first.split(',')
 game = Game.new(shots)
 puts game.total_score
