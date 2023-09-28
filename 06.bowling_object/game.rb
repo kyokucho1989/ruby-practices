@@ -14,7 +14,7 @@ class Game
               end
       @frames << Frame.new(*frame)
     end
-    frame = shots.shift(shots.size)
+    frame = shots
     @frames << Frame.new(*frame)
   end
 
@@ -25,11 +25,7 @@ class Game
   private
 
   def compute_shot_score
-    pin = 0
-    @frames.each do |frame|
-      pin += frame.frame_score
-    end
-    pin
+    @frames.sum { |frame| frame.frame_score }
   end
 
   def compute_spare_bonus
