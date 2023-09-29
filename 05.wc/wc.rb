@@ -3,6 +3,7 @@
 
 require 'optparse'
 
+DEFAULT_CONTAINER_LENGTH = 8
 def build_display_status_from_options
   opt = OptionParser.new
   options = { has_c_option: false, has_l_option: false, has_w_option: false }
@@ -20,7 +21,7 @@ end
 def compute_file_sizes(str)
   row_size =  str.count("\n")
   word_size = str.split(' ').size
-  byte_size = str.size
+  byte_size = str.bytesize
   { row_size:, word_size:, byte_size: }
 end
 
@@ -28,10 +29,12 @@ def display_file_data(display_status, file_sizes, file_name = '')
   row_size = file_sizes[:row_size]
   word_size = file_sizes[:word_size]
   byte_size = file_sizes[:byte_size]
+  string_lengths = file_sizes.values.map { |i| i.to_s.length }
+  container_length = [string_lengths.max + 1, DEFAULT_CONTAINER_LENGTH].max
   display = ''
-  display += row_size.to_s.rjust(8) if display_status[:is_display_lines]
-  display += word_size.to_s.rjust(8) if display_status[:is_display_words]
-  display += byte_size.to_s.rjust(8) if display_status[:is_display_bytes]
+  display += row_size.to_s.rjust(container_length) if display_status[:is_display_lines]
+  display += word_size.to_s.rjust(container_length) if display_status[:is_display_words]
+  display += byte_size.to_s.rjust(container_length) if display_status[:is_display_bytes]
   display += " #{file_name}" if !file_name.empty?
   puts display
 end
