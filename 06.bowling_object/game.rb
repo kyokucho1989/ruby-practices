@@ -5,10 +5,6 @@ require_relative 'frame'
 
 class Game
   def initialize(shots)
-    shots = shots.map do |shot|
-      shot == 'X' ? shot : shot.to_i
-    end
-
     @frames = []
     while shots.size > 3
       frame = if shots[0] == 'X'
