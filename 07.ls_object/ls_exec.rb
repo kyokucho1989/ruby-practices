@@ -15,4 +15,4 @@ opt.parse!(ARGV)
 
 option = LsOption.new(option_existence)
 ls = LsCommand.new(option)
-ls.display_file_data(option)
+ls.exec(option)

@@ -28,7 +28,7 @@ class LsCommand
     block_sizes.sum
   end
 
-  def display_file_data(option)
+  def exec(option)
     if option.l_option
       total_blocksize = comupute_total_blocksize
       display_detailed_information(total_blocksize)
