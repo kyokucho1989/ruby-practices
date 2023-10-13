@@ -77,7 +77,3 @@ class LsCommand
     end
   end
 end
-
-# option = LsOption.new
-# ls = LsCommand.new(option)
-# ls.display_file_data(option)
