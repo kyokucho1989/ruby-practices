@@ -28,7 +28,7 @@ class LsCommand
     end
   end
 
-  private 
+  private
 
   def files
     @files ||= @file_names.map do |name|
