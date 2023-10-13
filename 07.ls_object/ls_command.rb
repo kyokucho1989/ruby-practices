@@ -69,6 +69,6 @@ class LsCommand
   end
 end
 
-option = LsOption.new
-ls = LsCommand.new(option)
-ls.display_file_data(option)
+# option = LsOption.new
+# ls = LsCommand.new(option)
+# ls.display_file_data(option)
