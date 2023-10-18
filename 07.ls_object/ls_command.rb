@@ -11,42 +11,43 @@ BLOCK_UNITS = 8
 DISPALY_COL_SIZE = 3
 
 class LsCommand
-  def initialize; end
+  def initialize(argv)
+    @option = LsOption.new(argv)
+  end
 
-  def exec(argv)
-    option = LsOption.new(argv)
-    if option.l_option
-      total_blocksize = comupute_total_blocksize(option)
-      display_detailed_information(total_blocksize, option)
+  def exec
+    if @option.l_option
+      total_blocksize = comupute_total_blocksize
+      display_detailed_information(total_blocksize)
     else
-      files = file_names(option).map { |name| { name: } }
-      matrix_type_files = matrix_type_files(files, option)
+      files = file_names.map { |name| { name: } }
+      matrix_type_files = matrix_type_files(files)
       display_multiple_columns(matrix_type_files)
     end
   end
 
   private
 
-  def files(option)
-    file_names(option).map do |name|
-      LsFile.new(name, option)
+  def files
+    file_names.map do |name|
+      LsFile.new(name, @option)
     end
   end
 
-  def file_names(option)
+  def file_names
     arg = ['*']
-    arg << File::FNM_DOTMATCH if option.a_option
-    Dir.glob(*arg).then { |result| option.r_option ? result.reverse : result }
+    arg << File::FNM_DOTMATCH if @option.a_option
+    Dir.glob(*arg).then { |result| @option.r_option ? result.reverse : result }
   end
 
-  def comupute_total_blocksize(option)
-    selected_files = files(option).select { |a| a.mode == '-' }
+  def comupute_total_blocksize
+    selected_files = files.select { |a| a.mode == '-' }
     block_sizes = selected_files.map { |file| (file.size.to_i / (BLOCK_SIZE * BLOCK_UNITS).to_f).ceil * BLOCK_UNITS }
     block_sizes.sum
   end
 
-  def matrix_type_files(files, option)
-    fold_point = (file_names(option).size / DISPALY_COL_SIZE.to_f).ceil
+  def matrix_type_files(files)
+    fold_point = (file_names.size / DISPALY_COL_SIZE.to_f).ceil
     matrix_type_files = files.each_slice(fold_point).to_a
     num = fold_point - matrix_type_files.last.size
     num.times do
@@ -65,9 +66,9 @@ class LsCommand
     end
   end
 
-  def display_detailed_information(total_blocksize, option)
+  def display_detailed_information(total_blocksize)
     puts "total #{total_blocksize}"
-    files(option).each do |file|
+    files.each do |file|
       print file.mode + file.permission + file.hardlink.rjust(5) + file.owner.rjust(10)
       print "#{file.group.rjust(7)}#{file.size.rjust(6)}#{file.timestamp.rjust(12)} #{file.name.ljust(5)}#{file.readlink}"
       puts ''

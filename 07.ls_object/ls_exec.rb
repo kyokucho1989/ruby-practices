@@ -5,5 +5,5 @@ require_relative 'ls_option'
 require_relative 'ls_file'
 require_relative 'ls_command'
 
-ls = LsCommand.new
-ls.exec(ARGV)
+ls = LsCommand.new(ARGV)
+ls.exec
